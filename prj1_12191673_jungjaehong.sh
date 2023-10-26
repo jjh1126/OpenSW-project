@@ -48,6 +48,14 @@ do
 			
 			;;
 		2)
+			read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n): " answer
+			echo
+			
+			if [ "$answer" == "y" ]
+			then
+				cat $item | awk -F\| '$7==1 {print $1, $2}' | head -n 10
+				echo
+			fi
 
 			;;
 		3)
@@ -70,7 +78,8 @@ do
 			;;
 		9)
 			echo "Bye!"
-			exit 0
+			break
+
 			;;
 	esac
 done
