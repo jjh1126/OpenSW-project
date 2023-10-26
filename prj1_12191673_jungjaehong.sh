@@ -59,6 +59,21 @@ do
 
 			;;
 		3)
+			read -p "Please enter 'movie id' (1~1682) : " movie_id
+                        echo
+
+			sum=0
+			cnt=0
+
+			for i in $(cat $data | awk -v mid=$movie_id '$2==mid {print $3}')
+			do
+				sum=$((sum+i))
+				cnt=$((cnt+1))
+			done
+			
+			echo $movie_id $sum $cnt | awk '{printf("average rating of %s: %.5f",$1,$2/$3)}'
+			echo
+			echo
 
 			;;
 		4)
