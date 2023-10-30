@@ -41,7 +41,6 @@ do
 
 	case $choice in 
 		1)
-			# awk를 사용하여 u.item 파일에서 해당하는 열 읽어오기
 			read -p "Please enter 'movie id' (1~1682) : " movie_id
 			echo
 			cat $item | awk -F\| -v mid=$movie_id '$1==mid {print $0}'
@@ -49,7 +48,6 @@ do
 			
 			;;
 		2)
-			# awk를 사용하여 u.item 파일에서 해당하는 열 읽어오기
 			read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n): " answer
 			echo
 			
@@ -61,7 +59,6 @@ do
 
 			;;
 		3)
-			# movie id에 해당하는 평점 정보를 u.data에서 읽어와서 for문의 리스트로 넘겨주기
 			read -p "Please enter 'movie id' (1~1682) : " movie_id
                         echo
 
@@ -74,7 +71,12 @@ do
 				cnt=$((cnt+1))
 			done
 			
-			echo $movie_id $sum $cnt | awk '{printf("average rating of %s: %.5f\n",$1,$2/$3)}'
+			if [ $cnt -eq 0 ]
+			then
+				cnt=1
+			fi
+
+			echo $movie_id $sum $cnt | awk '{printf("average rating of %s: %.5g\n",$1,$2/$3)}'
 			echo
 
 			;;
@@ -82,7 +84,6 @@ do
 			read -p "Do you want to delete the ‘IMDb URL’ from ‘u.item’?(y/n): " answer
 			echo
 			
-			# http로 시작하여 '|'가 포함되지 않은 문자열을 삭제
 			if [ "$answer" == "y" ]
                         then
 				cat $item | sed -E 's/http[^|]*//' | head -n 10
@@ -95,7 +96,6 @@ do
 			read -p "Do you want to get the data about users from ‘u.user’?(y/n) : " answer
                         echo
 			
-			# 한 줄씩 읽으면서 성별 문자를 변환하고 양식에 맞게 출력
                         if [ "$answer" == "y" ]
                         then
 				cat $user | awk -F\| '{printf("%s %s %s %s\n",$1, $2, $3, $4)}' | \
@@ -108,7 +108,6 @@ do
 			read -p "Do you want to Modify the format of ‘release data’ in ‘u.item’?(y/n) : " answer
 			echo
 			
-			# 한 줄씩 읽으면서 month를 먼저 변환하고 형식 바꿔주기
 			if [ "$answer" == "y" ]
 			then
 				cat $item | \
@@ -139,7 +138,26 @@ do
 
 			;;
 		8)
+			read -p "Do you want to get the average 'rating' of movies rated by users with 'age' between 20 and 29 and 'occupation' as 'programmer'?(y/n) : " answer
 
+			if [ "$answer" == "y" ]
+                        then
+				touch tmp.txt
+
+				for i in $(cat $user | awk -F\| '$2>19 && $2<30 && $4~"programmer" {print $1}')
+				do
+					cat $data | awk -v user_id=$i '$1==user_id {print $2, $3}' >> tmp.txt
+				done
+
+				for i in $(seq 1682)
+				do					
+					cat tmp.txt | awk -v mid=$i -v sum=0 -v cnt=0 '$1==mid {sum+=$2} $1==mid {cnt+=1} END {print mid, sum, cnt}' | awk '$3!=0 {printf("%s %.5g\n",$1,$2/$3)}'	
+				done
+				echo
+
+				rm tmp.txt
+
+			fi
 			;;
 		9)
 			echo "Bye!"
