@@ -81,7 +81,8 @@ do
 		4)
 			read -p "Do you want to delete the ‘IMDb URL’ from ‘u.item’?(y/n): " answer
 			echo
-
+			
+			# http로 시작하여 '|'가 포함되지 않은 문자열을 삭제
 			if [ "$answer" == "y" ]
                         then
 				cat $item | sed -E 's/http[^|]*//' | head -n 10
@@ -91,6 +92,16 @@ do
 
 			;;
 		5)
+			read -p "Do you want to get the data about users from ‘u.user’?(y/n) : " answer
+                        echo
+			
+			# 한 줄씩 읽으면서 성별 문자를 변환하고 양식에 맞게 출력
+                        if [ "$answer" == "y" ]
+                        then
+				cat $user | awk -F\| '{printf("%s %s %s %s\n",$1, $2, $3, $4)}' | \
+				sed -E -e 's/M/male/' -e 's/F/female/' -e  's/([0-9]+) ([0-9]+) (.*) (.*)/user \1 is \2 years old \3 \4/' | head -n 10
+                                echo
+                        fi
 
 			;;
 		6)
