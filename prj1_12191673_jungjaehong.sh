@@ -120,6 +120,22 @@ do
 
 			;;
 		7)
+			read -p "Please enter the ‘user id’(1~943) : " user_id
+			echo
+			
+			touch tmp.txt
+
+			cat $data | awk -v i=$user_id '$1==i {print $2}' | sort -n > tmp.txt
+
+			cat tmp.txt | tr '\n' '|' | sed -E 's/\|$/\n\n/'
+			
+			for i in $(cat tmp.txt | head -n 10)
+			do
+				cat $item | awk -F\| -v k=$i '$1==k {printf("%s|%s\n",$1,$2)}'
+			done
+			echo
+
+			rm tmp.txt
 
 			;;
 		8)
