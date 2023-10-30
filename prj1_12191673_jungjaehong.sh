@@ -105,6 +105,18 @@ do
 
 			;;
 		6)
+			read -p "Do you want to Modify the format of ‘release data’ in ‘u.item’?(y/n) : " answer
+			echo
+			
+			# 한 줄씩 읽으면서 month를 먼저 변환하고 형식 바꿔주기
+			if [ "$answer" == "y" ]
+			then
+				cat $item | \
+				sed -E -e 's/-Jan-/-01-/' -e 's/-Feb-/-02-/' -e 's/-Mar-/-03-/' -e 's/-Apr-/-04-/' -e 's/-May-/-05-/' -e 's/-Jun-/-06-/' \
+			       	-e 's/-Jul-/-07-/' -e 's/-Aug-/-08-/' -e 's/-Sep-/-09-/' -e 's/-Oct-/-10-/' -e 's/-Nov-/-11-/' -e 's/-Dec-/-12-/' \
+			       	-e 's/([0-9]+)-([0-9]+)-([0-9]+)/\3\2\1/' | head -n 10  
+				echo
+			fi
 
 			;;
 		7)
