@@ -41,6 +41,7 @@ do
 
 	case $choice in 
 		1)
+			# awk를 사용하여 u.item 파일에서 해당하는 열 읽어오기
 			read -p "Please enter 'movie id' (1~1682) : " movie_id
 			echo
 			cat $item | awk -F\| -v mid=$movie_id '$1==mid {print $0}'
@@ -48,6 +49,7 @@ do
 			
 			;;
 		2)
+			# awk를 사용하여 u.item 파일에서 해당하는 열 읽어오기
 			read -p "Do you want to get the data of ‘action’ genre movies from 'u.item’?(y/n): " answer
 			echo
 			
@@ -59,6 +61,7 @@ do
 
 			;;
 		3)
+			# movie id에 해당하는 평점 정보를 u.data에서 읽어와서 for문의 리스트로 넘겨주기
 			read -p "Please enter 'movie id' (1~1682) : " movie_id
                         echo
 
@@ -71,12 +74,20 @@ do
 				cnt=$((cnt+1))
 			done
 			
-			echo $movie_id $sum $cnt | awk '{printf("average rating of %s: %.5f",$1,$2/$3)}'
-			echo
+			echo $movie_id $sum $cnt | awk '{printf("average rating of %s: %.5f\n",$1,$2/$3)}'
 			echo
 
 			;;
 		4)
+			read -p "Do you want to delete the ‘IMDb URL’ from ‘u.item’?(y/n): " answer
+			echo
+
+			if [ "$answer" == "y" ]
+                        then
+				cat $item | sed -E 's/http[^|]*//' | head -n 10
+                                echo
+                        fi
+
 
 			;;
 		5)
